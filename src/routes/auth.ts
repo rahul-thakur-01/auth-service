@@ -1,10 +1,17 @@
 import express from 'express'
 import { AuthController } from '../controllers/AuthController'
+import { UserService } from '../services/UserService'
+import { User } from '../entity/User'
+import { AppDataSource } from '../config/data-source'
 
 const router = express.Router()
 
-const authController = new AuthController()
+const userRepository = AppDataSource.getRepository(User)
 
-router.post('/register', authController.register)
+const userService = new UserService(userRepository)
+
+const authController = new AuthController(userService)
+
+router.post('/register', (req, res) => authController.register(req, res))
 
 export default router

@@ -9,7 +9,7 @@ const startServer = async () => {
             logger.info(`Server listing on port ${PORT}`)
         })
     } catch (err) {
-        console.error('Error starting server:', err)
+        logger.error('Error starting server:', err)
         process.exit(1)
     }
 }
