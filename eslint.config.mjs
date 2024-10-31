@@ -7,7 +7,7 @@ export default tseslint.config(
     ...tseslint.configs.recommended,
     {
         ignores: [
-            'node_modules', 
+            'node_modules',
             'dist',
             'eslint.config.mjs',
             'jest.config.js',
