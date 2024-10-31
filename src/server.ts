@@ -1,10 +1,16 @@
-function welcome(name: string) {
-    const person1 = {
-        name: 'Rahul',
-        age: 30,
+import app from './app'
+import { Config } from './config'
+
+const startServer = async () => {
+    const PORT = Config.PORT
+    try {
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`)
+        })
+    } catch (err) {
+        console.error('Error starting server:', err)
+        process.exit(1)
     }
-    const personName = person1.name
-    return `Welcome ${name}` + personName
 }
 
-welcome('John Doe')
+startServer()
