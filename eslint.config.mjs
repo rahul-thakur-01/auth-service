@@ -6,7 +6,12 @@ export default tseslint.config(
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     {
-        ignores: ['node_modules', 'dist', 'eslint.config.mjs'],
+        ignores: [
+            'node_modules', 
+            'dist',
+            'eslint.config.mjs',
+            'jest.config.js',
+        ],
     },
     {
         languageOptions: {
