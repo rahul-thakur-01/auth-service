@@ -149,10 +149,35 @@ describe('POST /auth/register', () => {
             // Act
             const userRepository = connection.getRepository(User)
             const users = await userRepository.find()
-            console.log(users[0].password)
             expect(users[0].password).not.toBe(userData.password)
             expect(users[0].password).toHaveLength(60)
             expect(users[0].password).toMatch(/^\$2b\$\d+\$/)
+        })
+
+        it('should return a 400 if the email is already in use', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john@gmail.com',
+                password: 'password',
+            }
+
+            const userRepository = connection.getRepository(User)
+            await userRepository.save({
+                ...userData,
+                role: Roles.CUSTOMER,
+            })
+
+            // Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+            const users = await userRepository.find()
+
+            // Assert
+            expect(response.status).toBe(400)
+            expect(users).toHaveLength(1)
         })
     })
 
