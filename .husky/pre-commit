@@ -1,1 +1,3 @@
-npm run lint:check
+// npm run lint:check
+
+npx lint-staged
