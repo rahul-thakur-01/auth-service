@@ -141,7 +141,7 @@ describe('POST /auth/register', () => {
                 firstName: 'John',
                 lastName: 'Doe',
                 email: 'john@gmail.com',
-                password: 'secret',
+                password: 'password',
             }
 
             await request(app).post('/auth/register').send(userData)
@@ -192,13 +192,16 @@ describe('POST /auth/register', () => {
             }
 
             // Act
+
             const response = await request(app)
                 .post('/auth/register')
                 .send(userData)
 
             // Assert
-
             expect(response.status).toBe(400)
+            const userRepository = connection.getRepository(User)
+            const users = await userRepository.find()
+            expect(users).toHaveLength(0)
         })
     })
 })

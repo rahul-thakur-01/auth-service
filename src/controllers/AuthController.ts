@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express'
 import { RegisterUserRequest } from '../types'
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
-import createHttpError from 'http-errors'
+import { validationResult } from 'express-validator'
 
 export class AuthController {
     constructor(
@@ -15,12 +15,13 @@ export class AuthController {
         res: Response,
         next: NextFunction,
     ) {
-        const { firstName, lastName, email, password } = req.body
-        if (!firstName || !lastName || !email || !password) {
-            const error = createHttpError(400, 'Missing required fields')
-            next(error)
+        const result = validationResult(req)
+        if (!result.isEmpty()) {
+            console.log(result.array())
+            res.status(400).json({ errors: result.array() })
             return
         }
+        const { firstName, lastName, email, password } = req.body
         this.logger.debug('New user registration request', {
             firstName,
             lastName,
