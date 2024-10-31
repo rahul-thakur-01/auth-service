@@ -1,16 +1,19 @@
 {
-  "name": "auth-service",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "rahul thakur",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/node": "^22.8.4",
-    "typescript": "^5.6.3"
-  }
+    "name": "auth-service",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node src/server.js",
+        "format:fix": "prettier . --write",
+        "format:check": "prettier . --check",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "rahul thakur",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@types/node": "^22.8.4",
+        "prettier": "3.3.3",
+        "typescript": "^5.6.3"
+    }
 }

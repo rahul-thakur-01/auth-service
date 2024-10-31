@@ -1,5 +1,5 @@
 function welcome(name: string) {
-  return `Welcome ${name}`;
+    return `Welcome ${name}`
 }
 
-welcome("John Doe");
+welcome('John Doe')
