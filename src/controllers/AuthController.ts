@@ -1,8 +1,12 @@
+import fs from 'fs'
+import path from 'path'
 import { NextFunction, Response } from 'express'
 import { RegisterUserRequest } from '../types'
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
+import { JwtPayload, sign } from 'jsonwebtoken'
+import createHttpError from 'http-errors'
 
 export class AuthController {
     constructor(
@@ -36,7 +40,29 @@ export class AuthController {
                 password,
             })
             this.logger.info(`User with id ${user.id} has been created`)
-            const accessToken = 'accessToken'
+
+            let privateKey: Buffer
+            try {
+                privateKey = fs.readFileSync(
+                    path.join(__dirname, '../../certs/private.pem'),
+                )
+            } catch {
+                const error = createHttpError(
+                    500,
+                    'Error while reading private key',
+                )
+                next(error)
+                return
+            }
+
+            const payload: JwtPayload = { sub: String(user.id) }
+
+            const accessToken = sign(payload, privateKey, {
+                algorithm: 'RS256',
+                expiresIn: '1h',
+                issuer: 'auth-service',
+            })
+
             const refreshToken = 'asdfsdfsadf'
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',
