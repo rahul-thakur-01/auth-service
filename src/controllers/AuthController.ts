@@ -63,13 +63,23 @@ export class AuthController {
                 issuer: 'auth-service',
             })
 
-            const refreshToken = 'asdfsdfsadf'
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60, // 1 hour
                 httpOnly: true,
             })
+
+            const refreshToken = sign(
+                payload,
+                process.env.REFRESH_TOKEN_SECRET!,
+                {
+                    algorithm: 'HS256',
+                    expiresIn: '30d',
+                    issuer: 'auth-service',
+                },
+            )
+
             res.cookie('refreshToken', refreshToken, {
                 domain: 'localhost',
                 sameSite: 'strict',
