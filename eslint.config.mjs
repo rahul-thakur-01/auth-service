@@ -11,7 +11,7 @@ export default tseslint.config(
             'dist',
             'eslint.config.mjs',
             'jest.config.js',
-            'scripts/generateKey.mjs'
+            'scripts/generateKey.mjs',
         ],
     },
     {
