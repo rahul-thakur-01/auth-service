@@ -5,6 +5,7 @@ import { AppDataSource } from '../../src/config/data-source'
 import { truncateTables } from '../utils'
 import { User } from '../../src/entity/User'
 import { Roles } from '../../src/constants'
+import { isJwt } from '../utils'
 
 describe('POST /auth/register', () => {
     let connection: DataSource
@@ -178,6 +179,49 @@ describe('POST /auth/register', () => {
             // Assert
             expect(response.status).toBe(400)
             expect(users).toHaveLength(1)
+        })
+
+        it('should return a access token and refresh token in the cookie', async () => {
+            // Arrange
+            const userData = {
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john@gmail.com',
+                password: 'password',
+            }
+
+            // Act
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+
+            let accessToken: string | null = null
+            let refreshToken: string | null = null
+
+            interface Headers {
+                'set-cookie': string[]
+            }
+
+            // Assuming response.header has type assertion as Headers
+            const cookies: string[] =
+                (response.header as unknown as Headers)['set-cookie'] || []
+
+            cookies.forEach((cookie: string) => {
+                if (cookie.startsWith('accessToken=')) {
+                    accessToken = cookie.split(';')[0].split('=')[1]
+                }
+
+                if (cookie.startsWith('refreshToken=')) {
+                    refreshToken = cookie.split(';')[0].split('=')[1]
+                }
+            })
+
+            // Assertions
+            expect(accessToken).not.toBeNull()
+            expect(refreshToken).not.toBeNull()
+
+            expect(isJwt(accessToken)).toBeTruthy()
+            expect(isJwt(refreshToken)).toBeTruthy()
         })
     })
 

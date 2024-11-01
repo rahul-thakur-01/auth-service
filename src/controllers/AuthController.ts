@@ -36,6 +36,20 @@ export class AuthController {
                 password,
             })
             this.logger.info(`User with id ${user.id} has been created`)
+            const accessToken = 'accessToken'
+            const refreshToken = 'asdfsdfsadf'
+            res.cookie('accessToken', accessToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60, // 1 hour
+                httpOnly: true,
+            })
+            res.cookie('refreshToken', refreshToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+                httpOnly: true,
+            })
             res.status(201).json({ id: user.id })
         } catch (err) {
             next(err)
