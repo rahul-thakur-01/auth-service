@@ -1,16 +1,20 @@
 import { NextFunction, Response } from 'express'
-import { RegisterUserRequest } from '../types'
+import { RegisterUserRequest, LoginUserRequest } from '../types'
+
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenService } from '../services/TokenService'
+import createHttpError from 'http-errors'
+import { CredentialService } from '../services/CredentialService'
 
 export class AuthController {
     constructor(
         private userService: UserService,
         private logger: Logger,
         private tokenService: TokenService,
+        private credentialService: CredentialService,
     ) {}
 
     async register(
@@ -20,7 +24,7 @@ export class AuthController {
     ) {
         const result = validationResult(req)
         if (!result.isEmpty()) {
-            console.log(result.array())
+            // console.log(result.array())
             res.status(400).json({ errors: result.array() })
             return
         }
@@ -39,6 +43,84 @@ export class AuthController {
                 password,
             })
             this.logger.info(`User with id ${user.id} has been created`)
+
+            const payload: JwtPayload = {
+                sub: String(user.id),
+                role: user.role,
+            }
+
+            const accessToken = this.tokenService.generateAccessToken(payload)
+            // Record the refresh token in the database
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user)
+            // Embed the refresh token id in the payload
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: String(newRefreshToken.id),
+            })
+
+            res.cookie('accessToken', accessToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60, // 1 hour
+                httpOnly: true,
+            })
+
+            res.cookie('refreshToken', refreshToken, {
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+                httpOnly: true,
+            })
+            res.status(201).json({ id: user.id })
+        } catch (err) {
+            next(err)
+            return
+        }
+    }
+
+    async login(req: LoginUserRequest, res: Response, next: NextFunction) {
+        // Validate the request
+        const result = validationResult(req)
+        if (!result.isEmpty()) {
+            console.log(result.array())
+            res.status(400).json({ errors: result.array() })
+            return
+        }
+        const { email, password } = req.body
+        this.logger.debug('New request to login a user', {
+            email,
+            password: '***',
+        })
+
+        // check is usersname (email) exists in the database
+        // Compare the password with the hashed password
+        // Generate Token
+        // Add token to the Cookie
+        // Return the reposnse(id)
+
+        try {
+            const user = await this.userService.findByEmail(email)
+            if (!user) {
+                const error = createHttpError(
+                    400,
+                    'Email or password does not match',
+                )
+                next(error)
+                return
+            }
+            const passwordMatch = await this.credentialService.comparePassword(
+                password,
+                user.password,
+            )
+            if (!passwordMatch) {
+                const error = createHttpError(
+                    400,
+                    'Email or password does not match',
+                )
+                next(error)
+                return
+            }
 
             const payload: JwtPayload = {
                 sub: String(user.id),
