@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express'
-import { RegisterUserRequest, LoginUserRequest } from '../types'
+import { RegisterUserRequest, LoginUserRequest, AuthRequest } from '../types'
 
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
@@ -154,6 +154,20 @@ export class AuthController {
         } catch (err) {
             next(err)
             return
+        }
+    }
+
+    async self(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            if (!req.auth || !req.auth.sub) {
+                return res.status(401).json({ message: 'Unauthorized' })
+            }
+
+            const user = await this.userService.findById(Number(req.auth.sub))
+
+            res.json({ ...user, password: undefined })
+        } catch (error) {
+            next(error)
         }
     }
 }
