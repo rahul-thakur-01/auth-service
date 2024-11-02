@@ -12,6 +12,11 @@ export default tseslint.config(
             'eslint.config.mjs',
             'jest.config.js',
             'scripts/generateKey.mjs',
+            'scripts/convertPemToJwk.mjs',
+            "tests",                
+            "**/*.spec.ts",          
+            "**/*.test.ts", 
+            "app.spec.ts"
         ],
     },
     {
