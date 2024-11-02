@@ -6,6 +6,8 @@ import { AppDataSource } from '../../src/config/data-source'
 import app from '../../src/app'
 import { Roles } from '../../src/constants'
 import { User } from '../../src/entity/User'
+import { createTenant } from '../utils'
+import { Tenant } from '../../src/entity/Tenant'
 
 describe('POST /users', () => {
     let connection: DataSource
@@ -32,6 +34,9 @@ describe('POST /users', () => {
 
     describe('Given all fields', () => {
         it('should persist the user in the database', async () => {
+            // create tenant for user
+            const tenant = await createTenant(connection.getRepository(Tenant))
+
             const adminToken = jwks.token({
                 sub: '1',
                 role: Roles.ADMIN,
@@ -43,7 +48,7 @@ describe('POST /users', () => {
                 lastName: 'K',
                 email: 'rakesh@mern.space',
                 password: 'password',
-                tenantId: 1,
+                tenantId: tenant.id,
                 role: Roles.MANAGER,
             }
 
@@ -66,13 +71,15 @@ describe('POST /users', () => {
                 role: Roles.ADMIN,
             })
 
+            const tenant = await createTenant(connection.getRepository(Tenant))
+
             // Register user
             const userData = {
                 firstName: 'John',
                 lastName: 'K',
                 email: 'rakesh@mern.space',
                 password: 'password',
-                tenantId: 1,
+                tenantId: tenant.id,
                 role: Roles.MANAGER,
             }
 
