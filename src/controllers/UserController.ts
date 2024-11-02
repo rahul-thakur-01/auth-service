@@ -28,7 +28,7 @@ export class UserController {
                 password,
                 role: Roles.MANAGER,
             })
-            res.status(201).json({ id: user.id })
+            res.status(201).json({ id: user.id, role: user.role })
         } catch (err) {
             next(err)
         }
