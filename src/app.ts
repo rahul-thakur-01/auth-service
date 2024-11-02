@@ -8,6 +8,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Hello World' })
