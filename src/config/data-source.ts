@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
     // synchronize: Config.NODE_ENV === 'dev' || Config.NODE_ENV === 'test', i configured this in the test file
     synchronize: false,
     logging: false,
-    entities: ['src/entity/*.ts'],
-    migrations: ['src/migration/*.ts'],
+    entities: ['src/entity/*.{ts,js}'],
+    migrations: ['src/migration/*.{ts,js}'],
     subscribers: [],
 })
