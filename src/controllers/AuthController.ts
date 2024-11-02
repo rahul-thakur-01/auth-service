@@ -8,6 +8,7 @@ import { JwtPayload } from 'jsonwebtoken'
 import { TokenService } from '../services/TokenService'
 import createHttpError from 'http-errors'
 import { CredentialService } from '../services/CredentialService'
+import { Roles } from '../constants'
 
 export class AuthController {
     constructor(
@@ -41,6 +42,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
+                role: Roles.CUSTOMER,
             })
             this.logger.info(`User with id ${user.id} has been created`)
 
@@ -100,7 +102,7 @@ export class AuthController {
         // Return the reposnse(id)
 
         try {
-            const user = await this.userService.findByEmail(email)
+            const user = await this.userService.findByEmailWithPassword(email)
             if (!user) {
                 const error = createHttpError(
                     400,
