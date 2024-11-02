@@ -6,7 +6,14 @@ import bcrypt from 'bcrypt'
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
 
-    async create({ firstName, lastName, email, password, role }: UserData) {
+    async create({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+    }: UserData) {
         const user = await this.userRepository.findOne({
             where: { email: email },
         })
@@ -24,6 +31,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : undefined, // we are passing {id:tentantId} becuase typeorm expects the object to be passed with id key to create a relation between user and tenant table
             })
         } catch {
             const error = createHttpError(
