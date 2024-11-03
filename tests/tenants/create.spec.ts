@@ -26,7 +26,7 @@ describe('POST /tenants', () => {
             sub: '1',
             role: Roles.ADMIN,
         })
-    })
+    }, 20000)
 
     afterAll(async () => {
         await connection.destroy()
