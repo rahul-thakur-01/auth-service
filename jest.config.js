@@ -2,16 +2,16 @@
 module.exports = {
     testEnvironment: 'node',
     // transform: {
-    //   "^.+.tsx?$": ["ts-jest",{}],
+    //   "^.+\\.tsx?$": ["ts-jest", {}],
     // },
     preset: 'ts-jest',
     verbose: true,
 
-    collectionCoverage: true,
+    collectCoverage: true,
     coverageProvider: 'v8',
-    collectionCoverageFrom: [
-        'src/**/*.ts',
+    collectCoverageFrom: [
+        "src/**/*.ts",
         "!tests/**",
-        "!**/node_modules/**",
+        "!**/node_modules/**"
     ],
 }
