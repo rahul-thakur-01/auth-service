@@ -17,7 +17,7 @@ describe('POST /auth/login', () => {
     beforeEach(async () => {
         await connection.dropDatabase()
         await connection.synchronize()
-    })
+    }, 20000)
 
     afterAll(async () => {
         await connection.destroy()
@@ -51,8 +51,8 @@ describe('POST /auth/login', () => {
                 ['set-cookie']: string[]
             }
             // Assert
-            let accessToken = null
-            let refreshToken = null
+            let accessToken: string | null = null
+            let refreshToken: string | null = null
             const cookies: string[] =
                 (response.header as unknown as Headers)['set-cookie'] || []
             cookies.forEach((cookie) => {

@@ -19,7 +19,7 @@ describe('GET /auth/self', () => {
         jwks.start()
         await connection.dropDatabase()
         await connection.synchronize()
-    })
+    }, 20000)
 
     afterEach(() => {
         jwks.stop()

@@ -15,12 +15,19 @@ describe('POST /auth/register', () => {
         connection = await AppDataSource.initialize()
     })
 
+    // beforeEach(async () => {
+    //     // database truncate
+    //     await connection.dropDatabase()
+    //     await connection.synchronize()
+    //     await truncateTables(connection)
+    // })
+
     beforeEach(async () => {
-        // database truncate
+        // Database truncate
         await connection.dropDatabase()
         await connection.synchronize()
         await truncateTables(connection)
-    })
+    }, 20000)
 
     afterAll(async () => {
         await connection.destroy()
